@@ -8,20 +8,50 @@ A simple and efficient Vision-Language-Action (VLA) model for robot manipulation
 
 <img width="506" height="796" alt="image" src="https://github.com/user-attachments/assets/7ffb8969-aa4f-4bcc-8c38-33d5e7da4b25" />
 
-## Installation
+### 1. Create Conda Environment
 
 ```bash
 conda create -n simvla python=3.10 -y
 conda activate simvla
-
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
-pip install transformers>=4.57.0
-pip install peft accelerate fastapi tensorboard uvicorn json_numpy safetensors scipy einops timm mmengine pyarrow h5py mediapy num2words av wandb websockets msgpack_numpy
-pip install flash-attn==2.5.6 --no-build-isolation
-pip install tensorflow tensorflow-datasets
 ```
 
-> Important: Use `transformers>=4.57.0`.
+### 2. Install PyTorch (CUDA 12.4)
+
+```bash
+pip install torch==2.6.0 torchvision==0.21.0 torchaudio==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+```
+
+### 3. Install Core Dependencies
+
+```bash
+pip install transformers==4.57.3
+pip install peft==0.19.1 accelerate==1.13.0 tensorboard==2.20.0 safetensors==0.7.0 scipy==1.15.3 einops==0.8.2 timm==1.0.27
+```
+
+### 4. Install Data & IO Libraries
+
+```bash
+pip install mmengine==0.10.7 pyarrow==24.0.0 h5py==3.14.0 av==17.0.1 opencv-python==4.10.0.84 imageio==2.37.3 Pillow==12.2.0
+```
+
+### 5. Install Training & Serving Tools
+
+```bash
+pip install fastapi==0.136.1 uvicorn==0.47.0 wandb==0.27.0 json-numpy==2.1.1 msgpack-numpy==0.4.8 mediapy==1.2.6 num2words==0.5.14 websockets==16.0
+```
+
+> **Note**: `flash-attn` is **not required** — it is not imported anywhere in the project and can safely be skipped.
+
+### Verified Environment
+
+| Package | Version |
+|---------|---------|
+| Python | 3.10.20 |
+| PyTorch | 2.6.0+cu124 |
+| CUDA | 12.4 |
+| transformers | 4.57.3 |
+| accelerate | 1.13.0 |
+| peft | 0.19.1 |
 
 ## Training (LIBERO Dataset)
 
@@ -46,8 +76,9 @@ python compute_libero_norm_stats.py \
     --subsets libero_10 libero_goal libero_object libero_spatial \
     --output ./norm_stats/libero_norm.json
 ```
+### 4.hugging face 下载 smolVLM-500M-Instruct 到 pretrained 目录
 
-### 4. Start Training
+### 5. Start Training
 
 **Small Model Configuration:**
 ```bash
@@ -59,13 +90,13 @@ bash train_smolvlm_small.sh
 bash train_smolvlm_large.sh
 ```
 
-### 5. Evaluation
+### 6. Evaluation
 
 ```bash
 cd evaluation/libero
 ```
 
-### 6. Results
+### 7. Results
 
 <img width="506" height="1220" alt="image" src="https://github.com/user-attachments/assets/6ee1cd5e-42c5-4cf7-9cce-6dc04c1a215f" />
 

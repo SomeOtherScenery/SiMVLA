@@ -16,21 +16,12 @@ pip install -e .
 
 ## 2. Start Server
 
-```bash
-conda activate simvla
-CUDA_VISIBLE_DEVICES=1 python serve_smolvlm_libero.py \
-    --checkpoint YuankaiLuo/SimVLA-LIBERO \
-    --norm_stats ../../norm_stats/libero_norm.json \
-    --port 8102
-```
-
-or 
-
 ```
 conda activate simvla
-CUDA_VISIBLE_DEVICES=1 python serve_smolvlm_libero.py \
-    --checkpoint ../../runs/simvla_libero_large/ckpt-150000 \
-    --norm_stats ../../norm_stats/libero_norm.json \
+CUDA_VISIBLE_DEVICES=1 python ./evaluation/libero/serve_smolvlm_libero.py \
+    --checkpoint ./runs/simvla_libero_small/ckpt-180000 \
+    --norm_stats ./norm_stats/libero_norm.json \
+    --smolvlm_model ./pretrained/SmolVLM-500M-Instruct \
     --port 8102
 ```
 
@@ -42,6 +33,5 @@ Full evaluation on all task suites:
 
 ```bash
 conda activate libero
-bash run_eval_all.sh 8102 10 "eval_simvla_150k" "0 1 2 3"
-bash run_eval_all.sh 8102 50 "eval_simvla_150k" "0 1 2 3"
+bash run_eval_all.sh
 ```
