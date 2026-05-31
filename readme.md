@@ -76,7 +76,10 @@ python compute_libero_norm_stats.py \
     --subsets libero_10 libero_goal libero_object libero_spatial \
     --output ./norm_stats/libero_norm.json
 ```
-### 4.hugging face 下载 smolVLM-500M-Instruct 到 pretrained 目录
+### 4.下载 smolVLM-500M-Instruct 到 pretrained 目录
+```
+modelscope download --model HuggingFaceTB/SmolVLM-500M-Instruct --local_dir pretrained
+```
 
 ### 5. Start Training
 
