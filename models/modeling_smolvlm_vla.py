@@ -19,12 +19,7 @@ from typing import Any, Dict
 
 import numpy as np
 import torch
-from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 from PIL import Image
-import uvicorn
-import json_numpy
-import cv2
 
 from transformers import PreTrainedModel, AutoProcessor, AutoModelForImageTextToText
 from .transformer_smolvlm import SmolVLMActionTransformer
@@ -67,6 +62,10 @@ class SmolVLMVLA(PreTrainedModel):
 
         # SmolVLM backbone
         logging.info(f"Loading SmolVLM from: {config.smolvlm_model_path}")
+
+        # Temporarily exit meta device context (set by transformers' _fast_init)
+        # so nested from_pretrained can load real weights.
+        #with torch.device('cpu'):
         self.vlm = AutoModelForImageTextToText.from_pretrained(
             config.smolvlm_model_path,
             torch_dtype=torch.float32,  # Use float32 for training stability
@@ -106,6 +105,11 @@ class SmolVLMVLA(PreTrainedModel):
 
         # Deferred FastAPI app
         self.app: FastAPI | None = None
+
+        # In transformers >= 5.x, post_init() is not called automatically from
+        # PreTrainedModel.__init__, so we call it explicitly to set up
+        # all_tied_weights_keys and other static properties.
+        #self.post_init()
 
     # ============================= SmolVLM encoder =============================
     def forward_vlm(
@@ -446,6 +450,11 @@ class SmolVLMVLA(PreTrainedModel):
         if self.app is not None:
             return
 
+        from fastapi import FastAPI
+        from fastapi.responses import JSONResponse
+        import json_numpy
+        import cv2
+
         app = FastAPI()
 
         @app.post("/act")
@@ -503,6 +512,7 @@ class SmolVLMVLA(PreTrainedModel):
 
     def run(self, processor, host: str = "0.0.0.0", port: int = 8000):
         """Launch the FastAPI service."""
+        import uvicorn
         self._build_app(processor)
         assert self.app is not None
         uvicorn.run(self.app, host=host, port=port)

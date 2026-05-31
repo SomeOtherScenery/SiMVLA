@@ -1,0 +1,20 @@
+*/__pycache__
+*.pyc
+
+# Training outputs
+runs/
+pretrained/
+
+# Evaluation outputs
+evaluation/libero/eval_results/
+evaluation/libero/eval_simvla_*/
+evaluation/libero/eval_simvla_*.txt
+
+# Dataset metas (symlinks to external data, generated files)
+datasets/metas/
+
+# Norm stats (generated from data)
+norm_stats/
+
+# Stray files
+=4.57.0

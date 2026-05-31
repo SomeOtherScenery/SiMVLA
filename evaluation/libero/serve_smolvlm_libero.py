@@ -84,6 +84,23 @@ def load_model(checkpoint_path: str, norm_stats_path: str = None, smolvlm_model_
     
     logger.info(f"Model loaded! Device: {device}, Image size: {CONFIG['image_size']}x{CONFIG['image_size']}")
 
+    # Verify that fine-tuned VLM weights were loaded (not base pretrained)
+    from transformers import AutoModelForImageTextToText as VLMClass
+    base_vlm = VLMClass.from_pretrained(
+        smolvlm_path, dtype=torch.float32, trust_remote_code=True
+    )
+    base_vlm = base_vlm.to(device)
+    # Compare first embedding layer weights
+    base_embed = base_vlm.model.text_model.embed_tokens.weight.data
+    loaded_embed = model.vlm.model.text_model.embed_tokens.weight.data
+    diff = (base_embed - loaded_embed).abs().max().item()
+    if diff < 1e-6:
+        logger.warning("WARNING: VLM weights appear UNCHANGED from base pretrained model! "
+                       "Fine-tuned weights may not have been loaded.")
+    else:
+        logger.info(f"VLM weights differ from base (max diff={diff:.6f}) — fine-tuned weights loaded.")
+    del base_vlm
+
 
 def preprocess_images(image0: np.ndarray, image1: np.ndarray):
     """Preprocess images to model input format."""

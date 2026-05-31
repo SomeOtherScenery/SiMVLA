@@ -12,7 +12,7 @@ set -e
 # Command line arguments (with defaults)
 # =============================================================================
 
-BATCH_SIZE=${1:-64}
+BATCH_SIZE=${1:-32}
 LEARNING_COEF=${2:-0.1}
 OUTPUT_DIR=${3:-./runs/simvla_libero_small}
 RESUME_CKPT=${4:-""}
@@ -24,7 +24,7 @@ echo "   output_dir: $OUTPUT_DIR"
 echo "   resume_ckpt: ${RESUME_CKPT:-'None (training from scratch)'}"
 
 # GPU configuration
-export CUDA_VISIBLE_DEVICES=0,1,2,3
+export CUDA_VISIBLE_DEVICES=4,5,6,7
 
 # Suppress TensorFlow logs
 export TF_CPP_MIN_LOG_LEVEL=2
@@ -37,7 +37,7 @@ NORM_STATS_PATH="./norm_stats/libero_norm.json"
 TRAIN_METAS_PATH="./datasets/metas/libero_train.json"
 
 # SmolVLM backbone (can be local path or HuggingFace repo)
-SMOLVLM_MODEL="HuggingFaceTB/SmolVLM-500M-Instruct"
+SMOLVLM_MODEL="./pretrained/SmolVLM-500M-Instruct"
 
 # =============================================================================
 # Training hyperparameters
